@@ -49,7 +49,7 @@ const App = () => {
         <Route path="/dashboard/*" element={<Dashboard />} />
       </Routes>
       
-      {alert?.type && <Alert alert={alert?.type} message={alert?.message} />}
+      {alert?.type && <Alert type={alert?.type} message={alert?.message} />}
     </div>
   );
 };
