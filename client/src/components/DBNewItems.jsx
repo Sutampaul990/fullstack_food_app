@@ -10,6 +10,8 @@ import { alertDanger, alertNULL , alertSuccess } from '../context/actions/alertA
 import { motion } from 'framer-motion';
 import { buttonClick } from '../animations';
 import { FaCloudUploadAlt, MdDelete } from "../assets/icons";
+import { addNewProduct, getAllProducts } from '../api';
+import {setAllProducts} from "../context/actions/productActions";
 
 
 const DBNewItems = () => {
@@ -49,10 +51,10 @@ const DBNewItems = () => {
           setProgress(null);
 
           dispatch(alertSuccess("Image uploaded to Cloud Successfully...."))
-            setTimeout(() => {
-              dispatch(alertNULL())
-            }, 3000);
-          });
+          setTimeout(() => {
+            dispatch(alertNULL())
+          }, 3000);
+        });
       }
     );
   };
@@ -69,6 +71,29 @@ const DBNewItems = () => {
         dispatch(alertNULL());
       }, 3000);
     });
+  };
+
+  const submitNewData = () => {
+    const data = {
+      product_name: itemName,
+      product_category: category,
+      product_price: price,
+      image_url: imgDownloadUrl,
+    };
+    addNewProduct(data).then(res => {
+      console.log(res);
+      dispatch(alertSuccess('Item added Successfully'));
+      setTimeout(() => {
+        dispatch(alertNULL());
+      }, 3000);
+      setImgDownloadUrl(null);
+      setPrice("")
+      setItemName("")
+      setCategory(null)
+    });
+    getAllProducts().then((data) => {
+      dispatch(setAllProducts(data))
+    })
   };
 
   return (
@@ -102,7 +127,29 @@ const DBNewItems = () => {
                 className="flex flex-col justify-center items-center w-full h-full px-24"
               >
                 <Spinner />
-                {progress}
+                {Math.round(progress > 0) && (
+                <div className=" w-full flex flex-col items-center justify-center gap-2">
+                  <div className="flex justify-between w-full">
+                    <span className="text-base font-medium text-textColor">
+                      Progress
+                    </span>
+                    <span className="text-sm font-medium text-textColor">
+                      {Math.round(progress) > 0 && (
+                        <>{`${Math.round(progress)}%`}</>
+                      )}
+                    </span>
+                  </div>
+
+                  <div className="w-full bg-gray-200 rounded-full h-2.5">
+                    <div
+                      className="bg-red-600 h-2.5 rounded-full transition-all duration-300 ease-in-out"
+                      style={{
+                        width: `${Math.round(progress)}%`,
+                      }}
+                    ></div>
+                  </div>
+                </div>
+              )}
               </div>
             </> :
             <>
@@ -148,6 +195,9 @@ const DBNewItems = () => {
             </>
           }
         </div>
+        <motion.button onClick={submitNewData} {...buttonClick} className="bg-red-400 shadow-md text-primary text-xl w-9/12 rounded-md justify-center items-center py-2 cursor-pointer hover:bg-red-500">
+          Submit
+        </motion.button>
       </div>
     </div>
   )

@@ -12,7 +12,7 @@ import { validateUserJWTToken } from '../api';
 import { useDispatch, useSelector } from 'react-redux';
 import { setUserDetails } from '../context/actions/userActions';
 
-import { alertInfo, alertWarning } from '../context/actions/alertActions';
+import { alertInfo, alertWarning, alertNULL } from '../context/actions/alertActions';
 
 
 const Login = () => {
@@ -56,6 +56,9 @@ const Login = () => {
     const signUpWithEmailPass = async () => {
         if( userEmail === "" || password === "" || confirm_password === ""){
             dispatch(alertInfo("Required fields should not be empty"));
+            setTimeout(() => {
+                dispatch(alertNULL())
+            }, 3000);
         }
         else{
             if(confirm_password === password){
@@ -77,6 +80,9 @@ const Login = () => {
             }
             else{
                 dispatch(alertWarning("Password doesn't match"));
+                setTimeout(() => {
+                    dispatch(alertNULL())
+                }, 3000);
             }
         }
     };
@@ -96,8 +102,17 @@ const Login = () => {
                 });
             });
         }
+        else if(userEmail === "" || password === "" ){
+            dispatch(alertInfo("Required fields should not be empty"));
+            setTimeout(() => {
+                dispatch(alertNULL())
+            }, 3000);
+        }
         else{
             dispatch(alertWarning("Password doesn't match"));
+            setTimeout(() => {
+                dispatch(alertNULL())
+            }, 3000);
         }
     };
 
